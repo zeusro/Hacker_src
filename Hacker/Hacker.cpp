@@ -1,4 +1,4 @@
-//数字流星雨   作者：Wicrecend
+//数字流星雨   
 //http://www.cnblogs.com/wicrecend/p/4564582.html
 #include "stdafx.h"
 #include <windows.h>
@@ -6,6 +6,7 @@
 #define ID_TIMER    1 
 #define STRMAXLEN  25 //一个显示列的最大长度 
 #define STRMINLEN  8  //一个显示列的最小长度
+#pragma comment ( linker, "/subsystem:windows /entry:mainCRTStartup" ) //去除启动或退出程序时黑框
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 ////////////////////////////////////////////////////////////////// 
@@ -24,8 +25,7 @@ typedef struct tagCharColumn
 	int iStopTimes, iMustStopTimes; //已经停滞的次数和必须停滞的次数,必须停滞的次数是随机的 
 }CharColumn, *pCharColumn;
 
-int main(HINSTANCE hInstance, HINSTANCE hPrevInstance,
-	PSTR szCmdLine, int iCmdShow)
+int main(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR szCmdLine, int iCmdShow)
 {
 	static TCHAR szAppName[] = TEXT("matrix");
 	HWND            hwnd;
@@ -86,7 +86,7 @@ int init(CharColumn *cc, int cyScreen, int x) //初始化
 	cc->iStopTimes = 0;
 	cc->head = cc->current =
 		(pCharChain)calloc(cc->iStrLen, sizeof(CharChain)); //生成显示列 
-	for (j = 0; j<cc->iStrLen - 1; j++)
+	for (j = 0; j < cc->iStrLen - 1; j++)
 	{
 		cc->current->prev = cc->point; //cc->point一个显示列的前个元素 
 		cc->current->ch = '\0';
@@ -137,7 +137,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		iColumnCount = cxScreen / (iFontWidth * 3 / 2); //屏幕所显示字母雨的列数
 
 		ccChain = (pCharColumn)calloc(iColumnCount, sizeof(CharColumn));
-		for (i = 0; i<iColumnCount; i++)
+		for (i = 0; i < iColumnCount; i++)
 		{
 			init(ccChain + i, cyScreen, (iFontWidth * 3 / 2)*i);
 		}
@@ -146,9 +146,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		hdc = GetDC(hwnd);
 		PatBlt(hdcMem, 0, 0, cxScreen, cyScreen, BLACKNESS); //将内存设备映像刷成黑色 
-		for (i = 0; i<iColumnCount; i++)
+		for (i = 0; i < iColumnCount; i++)
 		{
-			ctn = (ccChain + i)->iStopTimes++ >(ccChain + i)->iMustStopTimes;
+			ctn = (ccChain + i)->iStopTimes++ > (ccChain + i)->iMustStopTimes;
 			// 
 			(ccChain + i)->point = (ccChain + i)->head; //point用于遍历整个显示列 
 
@@ -199,7 +199,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		KillTimer(hwnd, ID_TIMER);
 		DeleteObject(hBitmap);
 		DeleteDC(hdcMem);
-		for (i = 0; i<iColumnCount; i++)
+		for (i = 0; i < iColumnCount; i++)
 		{
 			free((ccChain + i)->current);
 		}
